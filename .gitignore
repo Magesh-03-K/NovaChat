@@ -1,15 +1,25 @@
-# Node
+# Node / Frontend
 node_modules/
 dist/
+.vercel
 
-# Python
+# Python / Backend
 __pycache__/
 *.pyc
 .venv/
+.pytest_cache/
 
-# Env
+# Environment Variables & Secrets (CRITICAL)
 .env
-.env.local
+.env.*
+!.env.example
+client/.env
+client/.env.*
+!client/.env.example
+server/.env
+server/.env.*
+!server/.env.example
 
-# OS
+# OS & Logs
 .DS_Store
+*.log

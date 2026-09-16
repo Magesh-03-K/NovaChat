@@ -141,5 +141,6 @@ CLIENT_URL=http://localhost:5173
 ## 📖 Further Documentation
 
 - **[RUNNING.md](RUNNING.md)**: Detailed step-by-step running guide, port management, and troubleshooting.
+- **[DEPLOY.md](DEPLOY.md)**: Step-by-step instructions for deploying the FastAPI backend to Render and React frontend to Vercel.
 - **[GITHUB_UPLOAD.md](GITHUB_UPLOAD.md)**: Step-by-step guide to initializing Git, securing `.env` secrets, creating a GitHub repository, and pushing code online.
 - **[SPEC.md](SPEC.md)**: Full architecture specification, technical implementation plan, database security rules, and API endpoints.
