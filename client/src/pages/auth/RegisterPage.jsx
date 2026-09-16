@@ -9,22 +9,30 @@ export default function RegisterPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setSuccess('')
     setLoading(true)
     try {
-      await registerWithEmail({ email, password })
-      await api.post('/auth/register', { email, username, password })
-      navigate('/onboarding')
+      const signUpRes = await registerWithEmail({ email, password })
+      const userId = signUpRes.user?.id
+      await api.post('/auth/register', { user_id: userId, email, username, password })
+
+      if (!signUpRes.session) {
+        setSuccess('Account created! Please check your email inbox to confirm your account before logging in.')
+      } else {
+        navigate('/onboarding')
+      }
     } catch (err) {
       if (err.message === 'Failed to fetch' || err.message?.includes('fetch')) {
         setError('Cannot connect to Supabase backend.')
       } else {
-        setError(err.message || 'Could not create account. Try a different username/email.')
+        setError(err.response?.data?.detail || err.message || 'Could not create account. Try a different username/email.')
       }
     } finally {
       setLoading(false)
@@ -47,6 +55,15 @@ export default function RegisterPage() {
         {error && (
           <div className="p-3 bg-tertiary-container/10 text-tertiary-container rounded-xl text-sm font-medium text-center">
             {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="p-4 bg-primary-container/20 text-primary rounded-xl text-sm font-medium text-center border border-primary/20 space-y-2">
+            <p className="font-semibold">{success}</p>
+            <Link to="/login" className="inline-block text-xs underline font-bold mt-1">
+              Go to Login Page →
+            </Link>
           </div>
         )}
 

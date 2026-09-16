@@ -48,6 +48,9 @@ def decode_supabase_token(token: str) -> dict:
 
 
 
+optional_bearer_scheme = HTTPBearer(auto_error=False)
+
+
 def get_current_user_id(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
 ) -> str:
@@ -55,6 +58,19 @@ def get_current_user_id(
     on any route that needs to know who's calling."""
     payload = decode_supabase_token(credentials.credentials)
     return payload["sub"]  # Supabase puts the auth.users.id here
+
+
+def get_optional_user_id(
+    credentials: HTTPAuthorizationCredentials | None = Depends(optional_bearer_scheme),
+) -> str | None:
+    """FastAPI dependency: returns user_id if token is present, else None."""
+    if not credentials:
+        return None
+    try:
+        payload = decode_supabase_token(credentials.credentials)
+        return payload.get("sub")
+    except Exception:
+        return None
 
 
 def get_current_user_context(
@@ -66,4 +82,5 @@ def get_current_user_context(
         "id": payload.get("sub"),
         "email": payload.get("email"),
     }
+
 

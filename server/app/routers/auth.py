@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
-from app.core.security import get_current_user_id
+from app.core.security import get_current_user_id, get_optional_user_id
 from app.core.limiter import limiter
 from app.schemas.auth import (
     RegisterProfileRequest,
@@ -13,11 +13,19 @@ router = APIRouter()
 
 
 @router.post("/register")
-def register_profile(body: RegisterProfileRequest, user_id: str = Depends(get_current_user_id)):
+def register_profile(
+    body: RegisterProfileRequest,
+    authenticated_user_id: str | None = Depends(get_optional_user_id),
+):
     """Create the public.users profile row right after Supabase Auth signup.
-    Requires the just-issued Supabase access token, so `user_id` here is
-    already the authenticated auth.users.id."""
-    return auth_service.create_profile(user_id, body.email, body.username)
+    Supports both instant session token or user_id when email confirmation is pending."""
+    target_user_id = authenticated_user_id or body.user_id
+    if not target_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User ID is required for profile registration",
+        )
+    return auth_service.create_profile(target_user_id, body.email, body.username)
 
 
 @router.post("/resolve-username", response_model=ResolveUsernameResponse)
