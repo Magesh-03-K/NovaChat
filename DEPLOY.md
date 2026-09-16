@@ -7,26 +7,26 @@ This guide details how to deploy the **NovaChat** backend to **Render** and the 
 ## 📋 Overview
 
 ```
-┌─────────────────────────────────┐
-│     Vercel (Frontend)           │
-│  React + Vite SPA               │
-│  https://novachat.vercel.app    │
-└────────────────┬────────────────┘
-                 │
-                 │ REST API Requests & JWT
-                 ▼
-┌─────────────────────────────────┐
-│     Render (Backend)            │
-│  FastAPI (Python 3.12)          │
-│  https://novachat.onrender.com  │
-└────────────────┬────────────────┘
-                 │
-                 │ DB / Auth / Storage
-                 ▼
-┌─────────────────────────────────┐
-│     Supabase (Cloud)            │
-│  PostgreSQL, Auth, Realtime     │
-└─────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│     Vercel (Frontend)                   │
+│  React + Vite SPA                       │
+│  https://nova-chat-eta-taupe.vercel.app │
+└────────────────────┬────────────────────┘
+                     │
+                     │ REST API Requests & JWT
+                     ▼
+┌─────────────────────────────────────────┐
+│     Render (Backend)                    │
+│  FastAPI (Python 3.12)                  │
+│  https://novachat-fpgc.onrender.com     │
+└────────────────────┬────────────────────┘
+                     │
+                     │ DB / Auth / Storage
+                     ▼
+┌─────────────────────────────────────────┐
+│     Supabase (Cloud)                    │
+│  PostgreSQL, Auth, Realtime             │
+└─────────────────────────────────────────┘
 ```
 
 ---

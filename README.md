@@ -4,6 +4,15 @@ A full-stack, real-time messaging application inspired by WhatsApp and Telegram.
 
 ---
 
+### 🌐 Live Demo & Production URLs
+
+- 🚀 **Live Frontend (Vercel)**: [https://nova-chat-eta-taupe.vercel.app](https://nova-chat-eta-taupe.vercel.app)
+- ⚡ **Live Backend API (Render)**: [https://novachat-fpgc.onrender.com](https://novachat-fpgc.onrender.com)
+- 📖 **Interactive API Docs (Swagger)**: [https://novachat-fpgc.onrender.com/docs](https://novachat-fpgc.onrender.com/docs)
+- 🟢 **Backend Health Check**: [https://novachat-fpgc.onrender.com/api/health](https://novachat-fpgc.onrender.com/api/health)
+
+---
+
 ## 🚀 How the App Works
 
 NovaChat connects users through a real-time reactive architecture combining a **FastAPI** backend, a **React + Vite** single-page application, and **Supabase** cloud infrastructure.
