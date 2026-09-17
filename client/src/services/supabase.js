@@ -22,6 +22,9 @@ export async function registerWithEmail({ email, password }) {
     },
   })
   if (error) throw error
+  if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+    throw new Error('This email address is already registered. Please click Log In to sign in.')
+  }
   return data
 }
 

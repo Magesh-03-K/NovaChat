@@ -21,6 +21,9 @@ export default function RegisterPage() {
     try {
       const signUpRes = await registerWithEmail({ email, password })
       const userId = signUpRes.user?.id
+      if (!userId) {
+        throw new Error('Could not create account. This email may already be registered. Try logging in.')
+      }
       await api.post('/auth/register', { user_id: userId, email, username, password })
 
       if (!signUpRes.session) {
