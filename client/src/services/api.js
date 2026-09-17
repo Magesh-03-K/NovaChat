@@ -1,10 +1,20 @@
 import axios from 'axios'
 import { supabase } from './supabase.js'
 
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL
+  }
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:8000/api'
+  }
+  return 'https://novachat-fpgc.onrender.com/api'
+}
+
 // Central Axios instance; attaches the current Supabase access token to
 // every request so the FastAPI backend can verify identity.
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api',
+  baseURL: getBaseURL(),
 })
 
 let cachedToken = null

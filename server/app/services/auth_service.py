@@ -19,10 +19,18 @@ from app.core.supabase_client import supabase
 
 
 def create_profile(user_id: str, email: str, username: str) -> dict:
-    existing = (
+    existing_user = (
+        supabase.table("users").select("*").eq("id", user_id).execute()
+    )
+    if existing_user and getattr(existing_user, "data", None) and len(existing_user.data) > 0:
+        return existing_user.data[0]
+
+    existing_username = (
         supabase.table("users").select("id").eq("username", username).execute()
     )
-    if existing.data:
+    if existing_username and getattr(existing_username, "data", None) and len(existing_username.data) > 0:
+        if existing_username.data[0]["id"] == user_id:
+            return existing_username.data[0]
         raise HTTPException(status.HTTP_409_CONFLICT, "Username already taken")
 
     result = (
