@@ -2,13 +2,35 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../../services/api.js'
 import NovaLogo from '../../components/Shared/NovaLogo.jsx'
+import Icon from '../../components/Shared/Icon.jsx'
+import { compressImage } from '../../utils/imageCompressor.js'
 
 export default function OnboardingPage() {
   const [file, setFile] = useState(null)
   const [about, setAbout] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [compressing, setCompressing] = useState(false)
   const navigate = useNavigate()
+
+  const handleFileChange = async (e) => {
+    const selectedFile = e.target.files?.[0]
+    if (!selectedFile) return
+
+    if (selectedFile.type.startsWith('image/')) {
+      setCompressing(true)
+      try {
+        const compressed = await compressImage(selectedFile, 1600, 0.8)
+        setFile(compressed)
+      } catch (err) {
+        setFile(selectedFile)
+      } finally {
+        setCompressing(false)
+      }
+    } else {
+      setFile(selectedFile)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -55,14 +77,19 @@ export default function OnboardingPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="flex flex-col items-center gap-3">
             <div className="w-20 h-20 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-bold text-2xl shadow-inner relative overflow-hidden">
-              {file ? (
+              {compressing ? (
+                <div className="flex flex-col items-center gap-1 text-[11px] font-medium text-primary">
+                  <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  <span>Compressing...</span>
+                </div>
+              ) : file ? (
                 <img
                   src={URL.createObjectURL(file)}
-                  alt="Preview"
+                  alt="Profile photo preview"
                   className="w-full h-full object-cover rounded-full"
                 />
               ) : (
-                <span className="material-symbols-outlined text-[36px]">account_circle</span>
+                <Icon name="account_circle" className="text-[36px]" />
               )}
             </div>
             <label className="cursor-pointer bg-surface-container text-primary font-label-md text-label-md px-4 py-2 rounded-full font-semibold hover:bg-surface-container-high transition-all">
@@ -70,7 +97,7 @@ export default function OnboardingPage() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                onChange={handleFileChange}
                 className="hidden"
               />
             </label>
@@ -92,10 +119,10 @@ export default function OnboardingPage() {
           <div className="flex flex-col gap-2 pt-2">
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || compressing}
               className="w-full h-12 rounded-full bg-gradient-to-tr from-primary to-primary-container text-on-primary font-title-sm text-title-sm font-semibold shadow-lg hover:shadow-xl active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              <span className="material-symbols-outlined text-[20px]">check_circle</span>
+              <Icon name="check_circle" className="text-[20px]" />
               <span>{loading ? 'Saving Profile...' : 'Save & Continue'}</span>
             </button>
 

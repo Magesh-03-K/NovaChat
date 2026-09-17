@@ -7,7 +7,9 @@ import ChatThreadPage from './pages/chat/ChatThreadPage.jsx'
 import ContactsPage from './pages/contacts/ContactsPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import NewGroupPage from './pages/groups/NewGroupPage.jsx'
-import ProtectedRoute from './components/Shared/ProtectedRoute.jsx'
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage.jsx'
+import TermsPage from './pages/TermsPage.jsx'
+import NotFoundPage from './pages/NotFoundPage.jsx'
 
 export default function App() {
   return (
@@ -16,6 +18,8 @@ export default function App() {
         <Route path="/" element={<Navigate to="/chats" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
         
         <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
         <Route path="/chats" element={<ProtectedRoute><ChatListPage /></ProtectedRoute>} />
@@ -24,7 +28,7 @@ export default function App() {
         <Route path="/groups/new" element={<ProtectedRoute><NewGroupPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         
-        <Route path="*" element={<Navigate to="/chats" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   )

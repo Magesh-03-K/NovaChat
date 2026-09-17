@@ -152,9 +152,17 @@ export default function ProfilePage() {
         )}
 
         {loading ? (
-          <div className="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm border border-surface-container-low flex flex-col items-center gap-3 py-12">
-            <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-body-md text-on-surface-variant font-medium">Loading profile...</p>
+          <div className="space-y-6">
+            <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-surface-container-low flex flex-col items-center gap-3 animate-pulse">
+              <div className="w-24 h-24 rounded-full bg-surface-container"></div>
+              <div className="w-32 h-5 rounded-md bg-surface-container"></div>
+              <div className="w-44 h-4 rounded-md bg-surface-container"></div>
+            </div>
+            <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-surface-container-low space-y-4 animate-pulse">
+              <div className="w-40 h-5 rounded-md bg-surface-container mb-4"></div>
+              <div className="w-full h-12 rounded-xl bg-surface-container"></div>
+              <div className="w-full h-12 rounded-xl bg-surface-container"></div>
+            </div>
           </div>
         ) : profile ? (
           <form onSubmit={handleSave} className="space-y-6">
@@ -164,13 +172,13 @@ export default function ProfilePage() {
                 {file ? (
                   <img
                     src={URL.createObjectURL(file)}
-                    alt="Avatar preview"
+                    alt="New avatar preview"
                     className="w-full h-full object-cover rounded-full"
                   />
                 ) : profile.profile_photo_url ? (
                   <img
                     src={profile.profile_photo_url}
-                    alt="Profile photo"
+                    alt={`${username || profile.username || 'User'}'s profile photo`}
                     className="w-full h-full object-cover rounded-full"
                   />
                 ) : (

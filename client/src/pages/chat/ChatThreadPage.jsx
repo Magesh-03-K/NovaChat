@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../../services/api.js'
 import { supabase } from '../../services/supabase.js'
 import { useAuthStore } from '../../store/authStore.js'
+import { compressImage } from '../../utils/imageCompressor.js'
 
 export default function ChatThreadPage() {
   const { chatId } = useParams()
@@ -207,12 +208,15 @@ export default function ChatThreadPage() {
   }
 
   const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0]
+    let file = e.target.files?.[0]
     if (!file) return
     setShowAttachDrawer(false)
     setUploading(true)
 
     try {
+      if (file.type.startsWith('image/')) {
+        file = await compressImage(file, 1600, 0.8)
+      }
       const formData = new FormData()
       formData.append('file', file)
       const { data } = await api.post('/media/upload', formData, {
@@ -517,8 +521,11 @@ export default function ChatThreadPage() {
       {/* Messages Stream */}
       <main className="flex-1 overflow-y-auto px-margin-mobile pt-20 pb-40 flex flex-col gap-space-md">
         {loading && (
-          <div className="flex justify-center py-8">
-            <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <div className="flex flex-col gap-4 py-4 w-full">
+            <div className="self-start max-w-[70%] w-48 h-14 rounded-2xl bg-surface-container animate-pulse"></div>
+            <div className="self-end max-w-[70%] w-60 h-16 rounded-2xl bg-primary-container/30 animate-pulse"></div>
+            <div className="self-start max-w-[70%] w-40 h-12 rounded-2xl bg-surface-container animate-pulse"></div>
+            <div className="self-end max-w-[70%] w-52 h-14 rounded-2xl bg-primary-container/30 animate-pulse"></div>
           </div>
         )}
 
@@ -658,7 +665,7 @@ export default function ChatThreadPage() {
                         <div className="flex flex-col gap-1">
                           <img
                             src={msg.media_url}
-                            alt="Shared media"
+                            alt={msg.content || 'Shared image attachment'}
                             className="rounded-xl max-h-60 object-cover shadow-sm cursor-pointer"
                             onClick={(e) => {
                               if (isSelectionMode) return

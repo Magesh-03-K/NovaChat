@@ -315,7 +315,7 @@ export default function ChatListPage() {
                         {c.profile_photo_url ? (
                           <img
                             src={c.profile_photo_url}
-                            alt={c.username}
+                            alt={`${c.username}'s profile photo`}
                             className="w-full h-full object-cover"
                           />
                         ) : (
@@ -347,9 +347,19 @@ export default function ChatListPage() {
             </div>
 
             {loading && (
-              <div className="py-12 flex flex-col items-center justify-center text-on-surface-variant gap-3">
-                <div className="w-8 h-8 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-sm font-medium">Loading your conversations...</span>
+              <div className="flex flex-col gap-3 py-2">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <div key={n} className="rounded-2xl p-3.5 bg-surface-container-lowest border border-surface-container-low flex items-center gap-3.5 animate-pulse">
+                    <div className="w-12 h-12 rounded-full bg-surface-container flex-shrink-0"></div>
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="w-28 h-4 rounded-md bg-surface-container"></div>
+                        <div className="w-12 h-3 rounded-md bg-surface-container"></div>
+                      </div>
+                      <div className="w-48 h-3.5 rounded-md bg-surface-container"></div>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
@@ -421,7 +431,7 @@ export default function ChatListPage() {
                           {isDirect && peerUser?.profile_photo_url ? (
                             <img
                               src={peerUser.profile_photo_url}
-                              alt={peerUser.username}
+                              alt={`${peerUser.username || 'User'}'s profile photo`}
                               className="w-full h-full object-cover"
                             />
                           ) : (

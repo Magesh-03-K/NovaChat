@@ -221,7 +221,7 @@ export default function ContactsPage() {
                           {user.profile_photo_url ? (
                             <img
                               src={user.profile_photo_url}
-                              alt={user.username}
+                              alt={`${user.username}'s profile photo`}
                               className="w-full h-full object-cover rounded-full"
                             />
                           ) : (
@@ -311,7 +311,7 @@ export default function ContactsPage() {
                     {c.profile_photo_url ? (
                       <img
                         src={c.profile_photo_url}
-                        alt={c.username}
+                        alt={`${c.username}'s profile photo`}
                         className="w-full h-full object-cover rounded-full"
                       />
                     ) : (
@@ -356,7 +356,7 @@ export default function ContactsPage() {
               {selectedUser.profile_photo_url ? (
                 <img
                   src={selectedUser.profile_photo_url}
-                  alt={selectedUser.username}
+                  alt={`${selectedUser.username}'s profile photo`}
                   className="w-full h-full object-cover rounded-full"
                 />
               ) : (

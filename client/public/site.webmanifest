@@ -1,0 +1,16 @@
+{
+  "name": "NovaChat",
+  "short_name": "NovaChat",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#5b5fef",
+  "background_color": "#fcf8ff"
+}

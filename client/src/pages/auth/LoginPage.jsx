@@ -4,10 +4,13 @@ import { loginWithIdentifier, requestPasswordReset } from '../../services/supaba
 import { api } from '../../services/api.js'
 import { useAuthStore } from '../../store/authStore.js'
 import NovaLogo from '../../components/Shared/NovaLogo.jsx'
+import Icon from '../../components/Shared/Icon.jsx'
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
+  const [touched, setTouched] = useState({ identifier: false, password: false })
+
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
@@ -18,6 +21,27 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const setSession = useAuthStore((s) => s.setSession)
 
+  const validateIdentifier = (val) => {
+    if (!val.trim()) return 'Email or username is required.'
+    if (val.includes('@') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim())) {
+      return 'Please enter a valid email address.'
+    }
+    if (!val.includes('@') && (val.trim().length < 3 || val.trim().length > 20)) {
+      return 'Username must be 3 to 20 characters.'
+    }
+    return ''
+  }
+
+  const validatePassword = (val) => {
+    if (!val) return 'Password is required.'
+    if (val.length < 8) return 'Password must be at least 8 characters.'
+    return ''
+  }
+
+  const identifierError = touched.identifier ? validateIdentifier(identifier) : ''
+  const passwordError = touched.password ? validatePassword(password) : ''
+  const isFormValid = !validateIdentifier(identifier) && !validatePassword(password)
+
   const resolveUsername = async (username) => {
     const { data } = await api.post('/auth/resolve-username', { username })
     return data.email
@@ -25,8 +49,12 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setTouched({ identifier: true, password: true })
     setError('')
     setMessage('')
+
+    if (!isFormValid) return
+
     setLoading(true)
     try {
       const { session, user } = await loginWithIdentifier({
@@ -65,7 +93,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center p-space-base antialiased">
-      <div className="w-full max-w-md bg-surface-container-lowest p- space-xl p-8 rounded-3xl shadow-xl border border-surface-container-low space-y-6">
+      <div className="w-full max-w-md bg-surface-container-lowest p-8 rounded-3xl shadow-xl border border-surface-container-low space-y-6">
         {/* Header Logo & Title */}
         <div className="flex flex-col items-center text-center space-y-2">
           <NovaLogo size={56} />
@@ -90,7 +118,7 @@ export default function LoginPage() {
         )}
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div>
             <label className="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold mb-1">
               Email or Username
@@ -99,10 +127,19 @@ export default function LoginPage() {
               type="text"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
+              onBlur={() => setTouched((prev) => ({ ...prev, identifier: true }))}
               placeholder="you@example.com or username"
-              className="w-full h-12 bg-surface-container-low border border-surface-container text-on-surface rounded-xl px-4 font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+              className={`w-full h-12 bg-surface-container-low border ${
+                identifierError ? 'border-tertiary' : 'border-surface-container'
+              } text-on-surface rounded-xl px-4 font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all`}
               required
             />
+            {identifierError && (
+              <p className="text-[12px] text-tertiary font-medium mt-1 pl-1 flex items-center gap-1">
+                <Icon name="error" className="text-[14px]" />
+                {identifierError}
+              </p>
+            )}
           </div>
 
           <div>
@@ -122,10 +159,19 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
               placeholder="••••••••"
-              className="w-full h-12 bg-surface-container-low border border-surface-container text-on-surface rounded-xl px-4 font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+              className={`w-full h-12 bg-surface-container-low border ${
+                passwordError ? 'border-tertiary' : 'border-surface-container'
+              } text-on-surface rounded-xl px-4 font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all`}
               required
             />
+            {passwordError && (
+              <p className="text-[12px] text-tertiary font-medium mt-1 pl-1 flex items-center gap-1">
+                <Icon name="error" className="text-[14px]" />
+                {passwordError}
+              </p>
+            )}
           </div>
 
           <button
@@ -133,7 +179,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full h-12 rounded-full bg-gradient-to-tr from-primary to-primary-container text-on-primary font-title-sm text-title-sm font-semibold shadow-lg hover:shadow-xl active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
           >
-            <span className="material-symbols-outlined text-[20px]">login</span>
+            <Icon name="login" className="text-[20px]" />
             <span>{loading ? 'Logging in...' : 'Log In'}</span>
           </button>
         </form>
