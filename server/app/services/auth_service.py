@@ -33,12 +33,31 @@ def create_profile(user_id: str, email: str, username: str) -> dict:
             return existing_username.data[0]
         raise HTTPException(status.HTTP_409_CONFLICT, "Username already taken")
 
-    result = (
-        supabase.table("users")
-        .insert({"id": user_id, "email": email, "username": username})
-        .execute()
-    )
-    return result.data[0]
+    try:
+        result = (
+            supabase.table("users")
+            .insert({"id": user_id, "email": email, "username": username})
+            .execute()
+        )
+        return result.data[0]
+    except HTTPException:
+        raise
+    except Exception as err:
+        err_msg = str(err)
+        if "23503" in err_msg or "users_id_fkey" in err_msg:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid user_id: User has not signed up in Supabase Auth first.",
+            )
+        if "23505" in err_msg or "already exists" in err_msg:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Username or Email already registered.",
+            )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database error creating profile: {err_msg}",
+        )
 
 
 def resolve_username_to_email(username: str) -> str:
