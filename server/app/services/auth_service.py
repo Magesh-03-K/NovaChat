@@ -39,17 +39,21 @@ def create_profile(user_id: str, email: str, username: str) -> dict:
             .insert({"id": user_id, "email": email, "username": username})
             .execute()
         )
-        return result.data[0]
+        if result and getattr(result, "data", None) and len(result.data) > 0:
+            return result.data[0]
+        return {"id": user_id, "email": email, "username": username}
     except HTTPException:
         raise
     except Exception as err:
         err_msg = str(err)
-        if "23503" in err_msg or "users_id_fkey" in err_msg:
+        err_details = str(getattr(err, "details", "")) + str(getattr(err, "message", ""))
+        combined_err = f"{err_msg} {err_details}"
+        if "23503" in combined_err or "users_id_fkey" in combined_err or "foreign key constraint" in combined_err.lower():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid user_id: User has not signed up in Supabase Auth first.",
+                detail="Invalid user_id: User has not signed up in Supabase Auth first or table constraint failed.",
             )
-        if "23505" in err_msg or "already exists" in err_msg:
+        if "23505" in combined_err or "already exists" in combined_err or "unique constraint" in combined_err.lower():
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Username or Email already registered.",
